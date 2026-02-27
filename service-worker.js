@@ -1,10 +1,13 @@
-const CACHE_NAME = "thirtysecs-cache-v1";
+const CACHE_NAME = "thirtysecs-cache-v2";
+
+// Build asset URLs relative to the SW scope (important for GitHub Pages subfolders)
+const base = self.registration.scope; // e.g. https://user.github.io/thirtysecs/
 const ASSETS = [
-  "./",
-  "./index.html",
-  "./app.js",
-  "./style.css",
-  "./manifest.json"
+  base,
+  base + "index.html",
+  base + "app.js",
+  base + "style.css",
+  base + "manifest.json"
 ];
 
 self.addEventListener("install", (event) => {
@@ -21,8 +24,18 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Cache-first, with special handling for navigations (app shell)
 self.addEventListener("fetch", (event) => {
+  const req = event.request;
+
+  if (req.mode === "navigate") {
+    event.respondWith(
+      caches.match(base + "index.html").then((cached) => cached || fetch(req))
+    );
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    caches.match(req).then((cached) => cached || fetch(req))
   );
 });
