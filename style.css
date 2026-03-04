@@ -1,16 +1,17 @@
 :root {
-  --bg0: #070A10;
-  --bg1: #0B1220;
+  --bg0: #0f0c14;
+  --bg1: #1a1525;
   --card: rgba(255, 255, 255, 0.06);
   --card2: rgba(255, 255, 255, 0.08);
   --stroke: rgba(255, 255, 255, 0.12);
-  --stroke2: rgba(255, 255, 255, 0.18);
+  --stroke2: rgba(255, 255, 255, 0.22);
   --text: rgba(255, 255, 255, 0.92);
   --muted: rgba(255, 255, 255, 0.65);
   --muted2: rgba(255, 255, 255, 0.45);
   --shadow: 0 10px 30px rgba(0,0,0,0.35);
   --radius: 18px;
   --radius2: 14px;
+  --accent: rgba(255, 160, 120, 0.30);
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -21,9 +22,9 @@ html, body {
   font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--text);
   background:
-    radial-gradient(1200px 600px at 10% 0%, rgba(120, 140, 255, 0.16), transparent 60%),
-    radial-gradient(900px 500px at 90% 20%, rgba(255, 120, 220, 0.12), transparent 55%),
-    radial-gradient(900px 700px at 50% 110%, rgba(120, 255, 210, 0.10), transparent 60%),
+    radial-gradient(1200px 600px at 10% 0%, rgba(255, 160, 100, 0.13), transparent 60%),
+    radial-gradient(900px 500px at 90% 20%, rgba(255, 120, 180, 0.11), transparent 55%),
+    radial-gradient(900px 700px at 50% 110%, rgba(180, 140, 255, 0.10), transparent 60%),
     linear-gradient(180deg, var(--bg0), var(--bg1));
 }
 
@@ -78,11 +79,15 @@ select, button {
   width: 100%;
   font-size: 16px;
   padding: 11px 12px;
-  border-radius: 14px;
+  border-radius: 999px;
   border: 1px solid var(--stroke);
   background: rgba(10, 12, 18, 0.55);
   color: var(--text);
   outline: none;
+}
+
+select {
+  border-radius: 14px;
 }
 
 select:focus, button:focus {
@@ -103,10 +108,17 @@ button:active {
 }
 
 button.primary {
-  border-color: rgba(255,255,255,0.22);
+  border-color: rgba(255, 200, 160, 0.28);
   background:
-    radial-gradient(120% 200% at 10% 0%, rgba(120, 140, 255, 0.32), transparent 55%),
+    radial-gradient(120% 200% at 10% 0%, rgba(255, 160, 100, 0.32), transparent 55%),
     linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+}
+
+#renew {
+  border-color: rgba(255, 200, 160, 0.28);
+  background:
+    radial-gradient(120% 200% at 10% 0%, rgba(255, 160, 100, 0.28), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,0.13), rgba(255,255,255,0.06));
 }
 
 .card {
@@ -123,9 +135,8 @@ button.primary {
 .cardTop {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .card h2 {
@@ -137,12 +148,22 @@ button.primary {
 }
 
 .pill {
-  font-size: 12px;
-  color: var(--muted);
+  font-size: 23px;
+  color: var(--text);
   border: 1px solid var(--stroke);
-  padding: 6px 10px;
+  padding: 8px 16px;
   border-radius: 999px;
   background: rgba(0,0,0,0.18);
+}
+
+#timer-start {
+  width: auto;
+  padding: 8px 16px;
+  font-size: 15px;
+  border-color: rgba(255, 200, 160, 0.25);
+  background:
+    radial-gradient(120% 200% at 10% 0%, rgba(255, 160, 100, 0.22), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
 }
 
 .items {
