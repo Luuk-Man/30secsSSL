@@ -1,28 +1,33 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#111111" />
+  <meta name="theme-color" content="#0d0a14" />
   <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
-  <title>30 Seconds</title>
+  <title>30 Seconden SSL</title>
 </head>
 <body>
   <main class="wrap">
-    <h1>30 Seconds Scheikunde SSL</h1>
-
-  <label class="field">
-    <span>Niveau</span>
-    <select id="level">
-      <option value="VWO" selected>VWO</option>
-      <option value="HAVO">HAVO</option>
-    </select>
-  </label>    
+    <header class="header">
+      <h1>30 Seconden<span class="header-sub">Scheikunde SSL</span></h1>
+    </header>
 
     <section class="controls">
       <label>
-        Lengte Cursus
+        <span>Niveau</span>
+        <select id="level">
+          <option value="VWO" selected>VWO</option>
+          <option value="HAVO">HAVO</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Cursus</span>
         <select id="course">
           <option value="2">2-daagse</option>
           <option value="3">3-daagse</option>
@@ -30,31 +35,37 @@
       </label>
 
       <label>
-        Dag
+        <span>Dag</span>
         <select id="day"></select>
       </label>
 
-      <button id="renew">Nieuw!</button>
+      <button id="renew" class="renew-btn">Nieuw!</button>
     </section>
 
     <section class="card">
-      
-      <h2>Card</h2>
+      <div class="card-header">
+        <div class="card-meta">
+          <span id="card-label" class="card-label">VWO · Dag 1</span>
+          <span class="card-hint">Tik op een term om hem door te strepen</span>
+        </div>
+        <div class="card-timer-area">
+          <span id="timer" class="pill">30s</span>
+          <button id="timer-start" class="timer-btn">▶ Start</button>
+        </div>
+      </div>
+
       <ul id="items" class="items"></ul>
-      <p class="hint">Tap an item to cross it out.</p> 
+
+      <!-- Time's up banner (hidden by default) -->
+      <div id="timesup" class="timesup" aria-live="polite" hidden>
+        <span class="timesup-icon">⏰</span>
+        <span class="timesup-text">Tijd om!</span>
+      </div>
     </section>
-
-    <div class="cardTop">
-      <span id="timer" class="pill">30s</span>
-      <button id="timer-start">▶ Start</button>
-    </div>
   </main>
-
-
 
   <script src="app.js"></script>
   <script>
-    // register service worker for offline use
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("./service-worker.js");
     }
