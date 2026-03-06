@@ -9,13 +9,16 @@ const LEVELS = {
     list3: [],
   },
   HAVO: {
-    list1: ["Avondprogramma","Afterparty","Examen","CITO","CE","SE","SSL","Leiden","Scheikunde","Haverkoek","BiNaS","Atoom", "Molecuul", "HAVO", "Metaalrooster", "Ionrooser", "Vrije Elektronen", "Metaal", "Niet-Metaal", "Zout", "Moleculaire Stof", "Atoombinding", "H-bruggen", "VanderWaalsbinding", "Smeltpunt", "Kookpunt",
+    list1: ["Avondprogramma","Afterparty","Examen","CITO","CE","SE","SSL","Leiden","Scheikunde","Haverkoek","BiNaS","Atoom", "Molecuul", "HAVO", "Metaalrooster", "Ionrooster", "Vrije Elektronen", "Metaal", "Niet-Metaal", "Zout", "Moleculaire Stof", "Atoombinding", "H-bruggen", "VanderWaalsbinding", "Smeltpunt", "Kookpunt",
       "Stroomgeleiding", "Geladen Deeltjes", "Ionbinding", "Metaalbinding", "Elektronen", "Gas (g)", "Vloeibaar (l)", "Opgelost (aq)", "Vast (s)", "Ionen", "Oplosbaarheid", "H2O", "Hydrofoob", "Hydrofiel", "Apolair", "Polair", "Lading", "Atoombouw", "Protonen", "Neutronen", "K-schil", "L-schil", "massagetal", "Neutraal", "Zouthydraat",
       "Oplossing", "Oplosvergelijking", "LASD", "Lading (LASD)", "Atomen (LASD)", "Strepen (LASD)", "Delen (LASD)", "Reactievergelijking", "Verbrandingsreactie", "O2", "CO2", "Onvolledige verbranding", "Volledige Verbranding", "Kruistabel", "Molaire Massa", "dichtheid", "percentage", "deel/geheel", "Einddoel", "Losse Eenheid", "Mol", "Gram",
       "Liter", "Kilo", "ALLES", "Antwoord (ALLES)", "Logisch (ALLES)", "Leesbaar (ALLES)", "Eenheid (ALLES)", "Significantie (ALLES)", "Molverhouding", "Coëfficiënten"],
+    list2: [],
+    list3: [],
   },
 };
 
+// Day lists are cumulative — each day includes all prior days' terms
 LEVELS.VWO.list2 = LEVELS.VWO.list1.concat(["Evenwicht","Evenwichtsvoorwaarde (K)","Evenwichtsreactie","Reactiewarmte","Vormingswarmte","Delta E","E begin","E eind","Overmaat","Ondermaat","Exotherm","Endotherm","Joule","Joule per Mol","Katalysator","geactiveerde toestand","Druk","Temperatuur","Concentratie","Botsende Deeltjesmodel","Reactiesnelheid",
   "Energie","Aflopend","Naamgeving","HONC","COOH-groep/zuurgroep","OH-groep (alcoholgroep)","Ester","Verestering","H2O","Condensatiereactie","Additiereactie","Substitutiereactie","Dubbele binding","Methylgroep (CH3-groep)","Additiepolymerisatie","Condensatiepolymerisatie","Monomeer","Polymeer","Knakken","Copolymeer",
   "Crosslinks","Thermoharder","Thermoplast","Kristallijn","Amorf","Zijketens","Weekmaker","PORN","Electrochemische Cel","Elektronen","Oxidator","Reductor","Halfreactie","Totaalreactie","Elektronenoverdracht","RedOx","Elektrode","Opladen","Stroomlevering","DNA","m-RNA","Coderende streng","Matrijsstreng","Hydrolyse","Zeep","Codon","Basen","Aminozuur","Peptideketen"
@@ -92,6 +95,7 @@ let timerSeconds = TIMER_DURATION;
 
 const timerEl = document.getElementById("timer");
 const timerBtn = document.getElementById("timer-start");
+const timesUpEl = document.getElementById("timesup");
 
 function updateTimerDisplay() {
   timerEl.textContent = timerSeconds + "s";
@@ -102,11 +106,20 @@ function updateTimerDisplay() {
   }
 }
 
+function hideTimesUp() {
+  timesUpEl.hidden = true;
+}
+
+function showTimesUp() {
+  timesUpEl.hidden = false;
+}
+
 function resetTimerDisplay() {
   stopTimer();
   timerSeconds = TIMER_DURATION;
   updateTimerDisplay();
   timerBtn.textContent = "▶ Start";
+  hideTimesUp();
 }
 
 function stopTimer() {
@@ -118,18 +131,32 @@ function stopTimer() {
 
 function startTimer() {
   stopTimer();
+  hideTimesUp();
   timerSeconds = TIMER_DURATION;
   timerEl.classList.remove("timer-expired");
   updateTimerDisplay();
-  timerBtn.textContent = "↺ Restart";
+  timerBtn.textContent = "↺ Opnieuw";
 
   timerInterval = setInterval(() => {
     timerSeconds--;
     updateTimerDisplay();
 
+    // Tick bump animation
+    timerEl.classList.remove("tick");
+    void timerEl.offsetWidth; // reflow to restart animation
+    timerEl.classList.add("tick");
+
+    // Urgency wobble for last 5 seconds
+    if (timerSeconds <= 5 && timerSeconds > 0) {
+      timerEl.classList.add("urgent");
+    } else {
+      timerEl.classList.remove("urgent");
+    }
+
     if (timerSeconds <= 0) {
       stopTimer();
-      alert("⏰ Time's up!");
+      timerEl.classList.remove("urgent");
+      showTimesUp();
     }
   }, 1000);
 }
@@ -142,6 +169,12 @@ const courseEl = document.getElementById("course");
 const dayEl = document.getElementById("day");
 const renewEl = document.getElementById("renew");
 const itemsEl = document.getElementById("items");
+const cardLabelEl = document.getElementById("card-label");
+
+function updateCardLabel(state) {
+  const dayLabel = `Dag ${state.day}`;
+  cardLabelEl.textContent = `${state.level} · ${dayLabel}`;
+}
 
 function setDayOptions(courseDays) {
   const n = Number(courseDays);
@@ -163,13 +196,15 @@ function render(state) {
     li.textContent = text;
 
     li.addEventListener("click", () => {
+      // Toggle just this element — no full re-render, no animation restart
       state.crossed[text] = !state.crossed[text];
       saveState(state);
-      render(state);
+      li.classList.toggle("crossed", state.crossed[text]);
     });
 
     itemsEl.appendChild(li);
   }
+  updateCardLabel(state);
 }
 
 function renew(state) {
@@ -178,7 +213,7 @@ function renew(state) {
   state.crossed = {};
   saveState(state);
   render(state);
-  resetTimerDisplay(); // reset to 30s but don't auto-start
+  resetTimerDisplay();
 }
 
 // ======= Boot =======
